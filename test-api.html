@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #000; color: #0f0; }
+        button { background: #0f0; color: #000; padding: 10px 20px; margin: 5px; border: none; cursor: pointer; }
+        pre { background: #111; padding: 15px; border: 1px solid #0f0; overflow: auto; }
+        input { padding: 8px; margin: 5px; width: 300px; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>Direct API Test</h1>
+    
+    <div>
+        <h2>Step 1: Login</h2>
+        <input type="email" id="email" placeholder="Email" value="jeevasathya116@gmail.com">
+        <input type="password" id="password" placeholder="Password" value="12345678">
+        <button onclick="testLogin()">Login</button>
+        <pre id="loginResult"></pre>
+    </div>
+    
+    <div>
+        <h2>Step 2: Get Results</h2>
+        <button onclick="testResults()">Fetch Results</button>
+        <pre id="resultsOutput"></pre>
+    </div>
+    
+    <div>
+        <h2>Step 3: Get Progress</h2>
+        <button onclick="testProgress()">Fetch Progress</button>
+        <pre id="progressOutput"></pre>
+    </div>
+
+    <script>
+        let userData = null;
+        let token = null;
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    userData = data.user;
+                    token = data.token;
+                    document.getElementById('loginResult').className = 'success';
+                    console.log('User ID:', userData.id);
+                    console.log('User _id:', userData._id);
+                    console.log('Full user object:', userData);
+                } else {
+                    document.getElementById('loginResult').className = 'error';
+                }
+            } catch (error) {
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
+                document.getElementById('loginResult').className = 'error';
+            }
+        }
+
+        async function testResults() {
+            if (!userData || !token) {
+                document.getElementById('resultsOutput').textContent = 'Please login first!';
+                document.getElementById('resultsOutput').className = 'error';
+                return;
+            }
+            
+            const userId = userData.id || userData._id;
+            console.log('Fetching results for userId:', userId);
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/results/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('resultsOutput').textContent = 
+                    `URL: /results/user/${userId}\n` +
+                    `Status: ${response.status}\n` +
+                    `Count: ${Array.isArray(data) ? data.length : 0}\n\n` +
+                    JSON.stringify(data, null, 2);
+                document.getElementById('resultsOutput').className = data.length > 0 ? 'success' : 'error';
+            } catch (error) {
+                document.getElementById('resultsOutput').textContent = 'Error: ' + error.message;
+                document.getElementById('resultsOutput').className = 'error';
+            }
+        }
+
+        async function testProgress() {
+            if (!userData || !token) {
+                document.getElementById('progressOutput').textContent = 'Please login first!';
+                document.getElementById('progressOutput').className = 'error';
+                return;
+            }
+            
+            const userId = userData.id || userData._id;
+            console.log('Fetching progress for userId:', userId);
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/progress/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('progressOutput').textContent = 
+                    `URL: /progress/user/${userId}\n` +
+                    `Status: ${response.status}\n\n` +
+                    JSON.stringify(data, null, 2);
+                document.getElementById('progressOutput').className = 'success';
+            } catch (error) {
+                document.getElementById('progressOutput').textContent = 'Error: ' + error.message;
+                document.getElementById('progressOutput').className = 'error';
+            }
+        }
+    </script>
+</body>
+</html>

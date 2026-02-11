@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug User Session</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #00ff00; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #00ff00; }
+        pre { background: #000; padding: 10px; overflow: auto; }
+        button { background: #00ff00; color: #000; padding: 10px 20px; margin: 5px; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #00cc00; }
+    </style>
+</head>
+<body>
+    <h1>🔍 User Session Debugger</h1>
+    
+    <div class="section">
+        <h2>Current User Data:</h2>
+        <pre id="userData"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>User ID Information:</h2>
+        <pre id="userIdInfo"></pre>
+    </div>
+    
+    <div class="section">
+        <h2>Actions:</h2>
+        <button onclick="showUserData()">Refresh User Data</button>
+        <button onclick="testResultsAPI()">Test Results API</button>
+        <button onclick="clearAndReload()">Clear Storage & Reload</button>
+    </div>
+    
+    <div class="section">
+        <h2>API Test Results:</h2>
+        <pre id="apiResults"></pre>
+    </div>
+
+    <script>
+        function showUserData() {
+            const user = JSON.parse(localStorage.getItem('tngov_user') || '{}');
+            const token = localStorage.getItem('tngov_token');
+            
+            document.getElementById('userData').textContent = JSON.stringify(user, null, 2);
+            
+            const userIdInfo = {
+                'user.id': user.id,
+                'user._id': user._id,
+                'userId to use': user._id || user.id,
+                'token exists': !!token
+            };
+            
+            document.getElementById('userIdInfo').textContent = JSON.stringify(userIdInfo, null, 2);
+        }
+        
+        async function testResultsAPI() {
+            const user = JSON.parse(localStorage.getItem('tngov_user') || '{}');
+            const userId = user._id || user.id;
+            const token = localStorage.getItem('tngov_token');
+            
+            try {
+                const response = await fetch(`http://localhost:8080/api/results/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('apiResults').textContent = 
+                    `Status: ${response.status}\n` +
+                    `URL Called: /results/user/${userId}\n` +
+                    `Results Count: ${Array.isArray(data) ? data.length : 0}\n\n` +
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('apiResults').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        function clearAndReload() {
+            if (confirm('This will clear all storage and reload the page. Continue?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                location.href = '/login';
+            }
+        }
+        
+        // Auto-load on page load
+        window.onload = showUserData;
+    </script>
+</body>
+</html>

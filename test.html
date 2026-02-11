@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Test Page</h1>
+    <script>
+        fetch('/src/main.jsx')
+            .then(r => console.log('JS exists:', r.status))
+            .catch(e => console.log('Error:', e));
+    </script>
+</body>
+</html>
