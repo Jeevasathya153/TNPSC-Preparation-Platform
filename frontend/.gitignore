@@ -1,0 +1,22 @@
+# Node dependencies
+node_modules/
+
+# Environment configurations
+.env
+
+# Compiler and Bundler outputs
+dist/
+build/
+target/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE settings and OS files
+.vscode/
+.expo/
+.DS_Store
+Thumbs.db

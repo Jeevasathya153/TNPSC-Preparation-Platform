@@ -1,0 +1,9 @@
+# Local environment variables containing credentials
+.env
+
+# Compiler output files
+target/
+
+# Log files
+*.log
+logs/

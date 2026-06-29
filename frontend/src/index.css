@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light Mode (default) */
+body {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Dark Mode */
+:root.dark body {
+  background-color: #0f172a;
+  color: #f1f5f9;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Light mode scrollbar */
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Dark mode scrollbar */
+:root.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+:root.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+
+:root.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Professional Button Styles */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-secondary-600 hover:bg-secondary-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg;
+  }
+
+  .btn-accent {
+    @apply px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg;
+  }
+
+  .btn-outline {
+    @apply px-4 py-2 border-2 border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 font-semibold rounded-lg transition-colors;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-semibold rounded-lg transition-colors;
+  }
+
+  .card {
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-card hover:shadow-card-hover transition-shadow p-6 border border-gray-200 dark:border-slate-700;
+  }
+
+  .card-sm {
+    @apply bg-white dark:bg-slate-800 rounded-lg shadow-card hover:shadow-card-hover transition-shadow p-4 border border-gray-200 dark:border-slate-700;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2;
+  }
+
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .badge-primary {
+    @apply bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300;
+  }
+
+  .badge-success {
+    @apply bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300;
+  }
+}
