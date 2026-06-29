@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/contests")
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class ContestController {
 
     private final ContestService contestService;

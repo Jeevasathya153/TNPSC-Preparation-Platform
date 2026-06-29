@@ -2,6 +2,10 @@
 node_modules/
 
 # Environment configurations
+# .env contains local dev values (safe to commit — uses /api proxy, no secrets)
+# .env.production and .env.local must NEVER be committed (may contain real URLs/secrets)
+.env.local
+.env.production
 .env
 
 # Compiler and Bundler outputs

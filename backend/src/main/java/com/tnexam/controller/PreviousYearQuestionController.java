@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/previous-year-questions")
-@CrossOrigin(origins = {"http://localhost:3000","http://localhost:5173", "http://127.0.0.1:5173"})
 public class PreviousYearQuestionController {
 
     private final PreviousYearQuestionService previousYearQuestionService;

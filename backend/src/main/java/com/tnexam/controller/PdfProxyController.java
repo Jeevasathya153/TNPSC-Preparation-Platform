@@ -6,7 +6,6 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/pdf-proxy")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://127.0.0.1:5173"})
 public class PdfProxyController {
 
     private final RestTemplate restTemplate = new RestTemplate();
