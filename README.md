@@ -1,9 +1,5 @@
 # 🎯 TNPSC HUB — Tamil Nadu Government Exam Preparation Platform
 
-[![GitHub Release](https://img.shields.io/github/v/release/hp5cd/TNPSC-Preparation-Platform-main?color=indigo&include_prereleases&logo=github&style=flat-square)](https://github.com/hp5cd/TNPSC-Preparation-Platform-main)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square&logo=github-actions)](https://github.com/hp5cd/TNPSC-Preparation-Platform-main)
-[![Code Quality](https://img.shields.io/badge/code%20quality-A+-blueviolet?style=flat-square)](https://github.com/hp5cd/TNPSC-Preparation-Platform-main)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 TNPSC HUB is a premium, full-stack, Progressive Web Application (PWA) designed to aid candidates preparing for Tamil Nadu Government Exams (TNPSC Groups 1, 2, 2A, 4, and VAO). Utilizing an offline-first study architecture, dynamic practice testing suites, live contests with analytics-driven leaderboards, and personalized progress tracking, this platform is an all-in-one preparation engine.
 
