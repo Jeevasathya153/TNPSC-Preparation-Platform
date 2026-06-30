@@ -5,6 +5,7 @@ import Sidebar from '../components/common/Sidebar';
 import BottomNav from '../components/common/BottomNav';
 import Loader from '../components/common/Loader';
 import { getOfflinePdfBlob, isBookAvailableOffline } from '../services/offlineStorage';
+import API_BASE_URL from '../config/apiConfig';
 
 const PDFViewer = () => {
   const location = useLocation();
@@ -87,7 +88,11 @@ const PDFViewer = () => {
         blob = await response.blob();
       } else {
         // Fetch from online
-        const proxyUrl = `http://localhost:8080/api/pdf-proxy?url=${encodeURIComponent(pdfUrl)}`;
+        let baseUrl = API_BASE_URL;
+        if (baseUrl.startsWith('/')) {
+          baseUrl = window.location.origin + baseUrl;
+        }
+        const proxyUrl = `${baseUrl}/pdf-proxy?url=${encodeURIComponent(pdfUrl)}`;
         const response = await fetch(proxyUrl);
         if (!response.ok) throw new Error('Failed to download PDF');
         blob = await response.blob();

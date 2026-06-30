@@ -5,6 +5,7 @@ import com.tnexam.entity.ResourceActivity;
 import com.tnexam.repository.ResultRepository;
 import com.tnexam.repository.ResourceActivityRepository;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -40,15 +41,19 @@ public class ProgressService {
         progress.put("subjectsCovered", subjects.size());
         
         if (userResults.isEmpty()) {
-            progress.put("averageScore", 0);
-            progress.put("testsTaken", 0);
+            progress.put("averageScore", 0.0);
+            progress.put("testsTaken", 0L);
         } else {
             double totalScore = 0;
+            int validTestCount = 0;
             for (Result result : userResults) {
-                totalScore += (result.getScore() / (double) result.getTotalMarks()) * 100;
+                if (result.getTotalMarks() > 0) {
+                    totalScore += (result.getScore() / (double) result.getTotalMarks()) * 100;
+                    validTestCount++;
+                }
             }
             
-            double avgScore = totalScore / userResults.size();
+            double avgScore = validTestCount > 0 ? (totalScore / validTestCount) : 0.0;
             progress.put("averageScore", Math.round(avgScore * 100.0) / 100.0);
             progress.put("testsTaken", userResults.stream().filter(r -> r.getQuizTitle() != null && r.getQuizTitle().contains("Test")).count());
         }
@@ -58,21 +63,31 @@ public class ProgressService {
         
         // Add recent quiz results
         userResults.stream()
-            .sorted((a, b) -> b.getCompletedAt().compareTo(a.getCompletedAt()))
+            .sorted((a, b) -> {
+                LocalDateTime da = a.getCompletedAt() != null ? a.getCompletedAt() : (a.getCreatedAt() != null ? a.getCreatedAt() : LocalDateTime.MIN);
+                LocalDateTime db = b.getCompletedAt() != null ? b.getCompletedAt() : (b.getCreatedAt() != null ? b.getCreatedAt() : LocalDateTime.MIN);
+                return db.compareTo(da);
+            })
             .limit(5)
             .forEach(r -> {
                 Map<String, Object> activity = new HashMap<>();
                 activity.put("type", "quiz");
                 activity.put("title", r.getQuizTitle());
                 activity.put("subject", r.getSubject());
-                activity.put("score", (r.getScore() * 100.0) / r.getTotalMarks());
-                activity.put("date", r.getCompletedAt().toString());
+                double scorePercent = r.getTotalMarks() > 0 ? ((r.getScore() * 100.0) / r.getTotalMarks()) : 0.0;
+                activity.put("score", Math.round(scorePercent * 100.0) / 100.0);
+                LocalDateTime completedDate = r.getCompletedAt() != null ? r.getCompletedAt() : (r.getCreatedAt() != null ? r.getCreatedAt() : LocalDateTime.now());
+                activity.put("date", completedDate.toString());
                 recentActivities.add(activity);
             });
         
         // Add recent resource activities
         userActivities.stream()
-            .sorted((a, b) -> b.getLastAccessedAt().compareTo(a.getLastAccessedAt()))
+            .sorted((a, b) -> {
+                LocalDateTime da = a.getLastAccessedAt() != null ? a.getLastAccessedAt() : (a.getCreatedAt() != null ? a.getCreatedAt() : LocalDateTime.MIN);
+                LocalDateTime db = b.getLastAccessedAt() != null ? b.getLastAccessedAt() : (b.getCreatedAt() != null ? b.getCreatedAt() : LocalDateTime.MIN);
+                return db.compareTo(da);
+            })
             .limit(5)
             .forEach(a -> {
                 Map<String, Object> activity = new HashMap<>();
@@ -81,7 +96,8 @@ public class ProgressService {
                 activity.put("subject", a.getSubject());
                 activity.put("resourceType", a.getResourceType());
                 activity.put("completed", a.isCompleted());
-                activity.put("date", a.getLastAccessedAt().toString());
+                LocalDateTime accessedDate = a.getLastAccessedAt() != null ? a.getLastAccessedAt() : (a.getCreatedAt() != null ? a.getCreatedAt() : LocalDateTime.now());
+                activity.put("date", accessedDate.toString());
                 recentActivities.add(activity);
             });
         

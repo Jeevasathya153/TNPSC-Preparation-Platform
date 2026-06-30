@@ -1,5 +1,7 @@
 // Offline storage utility for books using IndexedDB
 // User-specific storage - each user's downloads are separate
+import API_BASE_URL from '../config/apiConfig';
+
 const DB_NAME = 'tngov_exam_prep';
 const DB_VERSION = 3; // Upgraded version for user-specific storage
 const STORE_NAME = 'books';
@@ -188,10 +190,12 @@ export const downloadBookForOffline = async (book, onProgress) => {
 
     if (onProgress) onProgress(10); // Starting download
     
-    // Use backend proxy (make sure backend is running on port 8080)
-    const proxyUrl = `http://localhost:8080/api/pdf-proxy?url=${encodeURIComponent(fileUrl)}`;
-    
-    if (onProgress) onProgress(20);
+    // Use dynamic API base URL from config
+    let baseUrl = API_BASE_URL;
+    if (baseUrl.startsWith('/')) {
+      baseUrl = window.location.origin + baseUrl;
+    }
+    const proxyUrl = `${baseUrl}/pdf-proxy?url=${encodeURIComponent(fileUrl)}`;
     
     const response = await fetch(proxyUrl);
     

@@ -81,6 +81,7 @@ public class ResultService {
         List<Result> results = resultRepository.findByUserId(userId);
         if (results.isEmpty()) return 0;
         return results.stream()
+            .filter(r -> r.getTotalMarks() > 0)
             .mapToDouble(r -> (r.getScore() * 100.0) / r.getTotalMarks())
             .average()
             .orElse(0);

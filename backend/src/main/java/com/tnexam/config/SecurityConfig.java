@@ -78,15 +78,8 @@ public class SecurityConfig {
                 "OPTIONS"
         ));
 
-        // Allow common request headers
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "Accept",
-                "Origin",
-                "X-Requested-With",
-                "Cache-Control"
-        ));
+        // Allow all request headers (Authorization, Content-Type, X-Requested-With, etc.)
+        configuration.setAllowedHeaders(Arrays.asList("*"));
 
         // Expose response headers that the frontend may need
         configuration.setExposedHeaders(Arrays.asList(
