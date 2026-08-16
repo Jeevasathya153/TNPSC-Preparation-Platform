@@ -33,7 +33,6 @@ graph TD
         IDB[(IndexedDB User-isolated Data)]
         JS[jsPDF Report Generator]
     end
-
     subgraph Service [Backend Server Tier - Spring Boot]
         C[REST Controllers]
         S[Service Logic Layer]
