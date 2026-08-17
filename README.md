@@ -1,11 +1,11 @@
-# 🎯 TNPSC HUB — Tamil Nadu Government Exam Preparation Platform
+#  TNPSC HUB — Tamil Nadu Government Exam Preparation Platform
 
 
 TNPSC HUB is a premium, full-stack, Progressive Web Application (PWA) designed to aid candidates preparing for Tamil Nadu Government Exams (TNPSC Groups 1, 2, 2A, 4, and VAO). Utilizing an offline-first study architecture, dynamic practice testing suites, live contests with analytics-driven leaderboards, and personalized progress tracking, this platform is an all-in-one preparation engine.
 
 ---
 
-## 📸 Visual Overview & Mockups
+##  Visual Overview & Mockups
 
 ### Project Banner
 *Placeholder: [TNPSC Hub Banner](https://placehold.co/1200x400/4f46e5/ffffff?text=TNPSC+HUB+Preparation+Platform)*
@@ -21,7 +21,7 @@ TNPSC HUB is a premium, full-stack, Progressive Web Application (PWA) designed t
 
 ---
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 The system follows a three-tier architecture with support for offline execution, data proxy caching, and client-side PDF compilation:
 
@@ -60,20 +60,20 @@ graph TD
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
-*   **🔐 Secure Authentication:** JWT-inspired token model stored in `sessionStorage` (automatically cleared on browser exit) with protected routes.
-*   **📖 Study Library:** Instant access to Samacheer Kalvi school notes (standards 6th to 12th) and exam answer keys.
-*   **📥 User-Isolated Offline Mode:** Download specific study books as binary blobs into the browser's IndexedDB. Download lists are isolated per user profile.
-*   **🔄 PDF Proxy:** Spring Boot REST proxy endpoint fetches external PDF files, bypassing CORS restrictions on mobile/desktop browsers.
-*   **📝 Timed Practice Test:** compiles a mock exam of 50 questions (15 easy, 20 medium, 15 hard) with a 60-minute countdown.
-*   **🏆 Daily & Weekly Contests:** Compete in timed contests with leaderboard listings sorting candidates by score and speed.
-*   **📈 Progress Reporting:** Tracks performance histories and generates formatted, printable PDF progress reports using `jsPDF`.
-*   **📱 Native App Installation:** Custom installation prompt widget catering to Android/Chrome and iOS Safari environments.
+*   ** Secure Authentication:** JWT-inspired token model stored in `sessionStorage` (automatically cleared on browser exit) with protected routes.
+*   ** Study Library:** Instant access to Samacheer Kalvi school notes (standards 6th to 12th) and exam answer keys.
+*   ** User-Isolated Offline Mode:** Download specific study books as binary blobs into the browser's IndexedDB. Download lists are isolated per user profile.
+*   ** PDF Proxy:** Spring Boot REST proxy endpoint fetches external PDF files, bypassing CORS restrictions on mobile/desktop browsers.
+*   ** Timed Practice Test:** compiles a mock exam of 50 questions (15 easy, 20 medium, 15 hard) with a 60-minute countdown.
+*   ** Daily & Weekly Contests:** Compete in timed contests with leaderboard listings sorting candidates by score and speed.
+*   ** Progress Reporting:** Tracks performance histories and generates formatted, printable PDF progress reports using `jsPDF`.
+*   ** Native App Installation:** Custom installation prompt widget catering to Android/Chrome and iOS Safari environments.
 
 ---
 
-## 💻 Technology Stack
+##  Technology Stack
 
 *   **Frontend Core:** React v18.2.0, Vite v5.0.8, TailwindCSS v3.3.0
 *   **Frontend Routing:** React Router DOM v6.20.0
@@ -86,7 +86,7 @@ graph TD
 
 ---
 
-## 📂 Folder Structure Summary
+##  Folder Structure Summary
 
 ```text
 TNPSC-Preparation-Platform/
@@ -113,7 +113,7 @@ TNPSC-Preparation-Platform/
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 ### Prerequisites
 *   Java Development Kit (JDK) 17 or higher
@@ -145,7 +145,7 @@ Open `http://localhost:3000` to interact with the platform.
 
 ---
 
-## 🌍 Environment Variables (Summary)
+##  Environment Variables (Summary)
 
 ### Backend Configuration (`backend/.env`)
 *   `MONGODB_URI`: Connection string to MongoDB database instance.
@@ -166,7 +166,7 @@ Open `http://localhost:3000` to interact with the platform.
 
 ---
 
-## 🚀 Deployment (Summary)
+##  Deployment (Summary)
 
 ### Backend Packaging
 ```bash
@@ -185,7 +185,7 @@ npm run build
 
 ---
 
-## 📡 API Overview (Summary)
+##  API Overview (Summary)
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :---: |
@@ -199,7 +199,7 @@ npm run build
 
 ---
 
-## 🔄 Project Workflow
+##  Project Workflow
 ```text
 [Register/Login] ──► [Dashboard] ───┬──► [Practice Test (Dynamic balanced 50 questions)]
                                     ├──► [Subjects & Quizzes (Topic assessments)]
@@ -209,7 +209,7 @@ npm run build
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 *   **JWT Implementation:** Integrate spring-security filter chains with cryptographic JWT verification.
 *   **Password Encryption:** Integrate BCrypt password encoding on user registration.
 *   **Discussion Forums:** Add subject threads to connect candidates.
