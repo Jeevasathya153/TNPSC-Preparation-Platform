@@ -5,21 +5,6 @@ TNPSC HUB is a premium, full-stack, Progressive Web Application (PWA) designed t
 
 ---
 
-## 📸 Visual Overview & Mockups
-
-### Project Banner
-*Placeholder: [TNPSC Hub Banner](https://placehold.co/1200x400/4f46e5/ffffff?text=TNPSC+HUB+Preparation+Platform)*
-
-### Screen Mockups
-| Mobile Dashboard & Streaks | Mobile PDF Reader & Offline Tool |
-| :---: | :---: |
-| *Placeholder: [Dashboard Mobile UI](https://placehold.co/300x600/0f172a/ffffff?text=Dashboard+Mobile)* | *Placeholder: [PDF Viewer Offline](https://placehold.co/300x600/0f172a/ffffff?text=PDF+Reader+Mobile)* |
-
-*Placeholder: [Demo Walkthrough GIF](https://placehold.co/800x450/e2e8f0/0f172a?text=App+Walkthrough+Demo)*
-
-*Live Demo: [View Platform Deployment](http://localhost:3000)*
-
----
 
 ## 🏗️ Architecture Overview
 
