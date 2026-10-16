@@ -202,11 +202,4 @@ npm run build
 *   **Push Notifications:** Hook in Firebase Cloud Messaging (FCM) for live alerts.
 
 ---
-
-## 📄 License & Authors
-*   **Authors:** TNPSC Prep Team
-*   **License:** MIT License
-*   **Contact:** [support@tnpschub.gov]
-"" 
-"" 
-"" 
+ 
