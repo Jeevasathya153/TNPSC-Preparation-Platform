@@ -227,6 +227,18 @@ All requests are prefixed with `/api`.
 *   `GET /books/download/{id}`: Downloads binary files or returns URL locations.
 *   `GET /pdf-proxy`: Bypasses CORS by proxying external PDF URLs.
 
+### 8.5 Official TNPSC Notification & Sync Endpoints (`/notifications`)
+*   `GET /notifications/official`: Returns verified official TNPSC announcements with filtering by `category`, `status`, `search`, and `sort`.
+*   `GET /notifications/official/latest`: Returns top latest official notifications.
+*   `GET /notifications/official/{id}`: Returns single official notification details.
+*   `POST /notifications/sync`: Admin endpoint to trigger manual synchronization from official TNPSC portals.
+*   `GET /notifications/sync-status`: Returns latest synchronization log, status, and stats.
+*   `GET /notifications/sync-history`: Returns recent synchronization history logs.
+*   `PUT /notifications/{id}/review`: Marks an announcement as reviewed by administrator.
+*   `GET /notifications/user/{userId}`: Returns user-specific alerts (e.g. quiz completions, achievements).
+*   `PUT /notifications/{id}/read`: Marks notification as read.
+*   `DELETE /notifications/{id}`: Deletes user notification (rejects deletion of official notifications).
+
 ---
 
 ## 9. Security Features

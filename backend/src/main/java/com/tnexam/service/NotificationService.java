@@ -6,9 +6,10 @@ import com.tnexam.repository.NotificationRepository;
 import com.tnexam.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -45,6 +46,9 @@ public class NotificationService {
         if (notification.getCreatedAt() == null) {
             notification.setCreatedAt(LocalDateTime.now());
         }
+        if (notification.getUpdatedAt() == null) {
+            notification.setUpdatedAt(LocalDateTime.now());
+        }
         return notificationRepository.save(notification);
     }
 
@@ -75,6 +79,87 @@ public class NotificationService {
         notificationRepository.deleteAll(notifications);
     }
 
+    // Official TNPSC Notifications Querying with Search, Filters and Sorting
+    public List<Notification> getOfficialNotifications(String category, String status, String search, String sort) {
+        List<Notification> list = notificationRepository.findByIsOfficialTrue();
+
+        // 1. Search Filter
+        if (search != null && !search.trim().isEmpty()) {
+            String q = search.trim().toLowerCase();
+            list = list.stream().filter(n ->
+                    (n.getTitle() != null && n.getTitle().toLowerCase().contains(q)) ||
+                    (n.getNotificationNumber() != null && n.getNotificationNumber().toLowerCase().contains(q)) ||
+                    (n.getDescription() != null && n.getDescription().toLowerCase().contains(q))
+            ).collect(Collectors.toList());
+        }
+
+        // 2. Category Filter
+        if (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("all")) {
+            String cat = category.trim().toLowerCase();
+            list = list.stream().filter(n ->
+                    n.getCategory() != null && n.getCategory().toLowerCase().contains(cat)
+            ).collect(Collectors.toList());
+        }
+
+        // 3. Status Filter
+        if (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase("all")) {
+            String st = status.trim().toLowerCase();
+            list = list.stream().filter(n ->
+                    n.getStatus() != null && n.getStatus().toLowerCase().replace(" ", "").contains(st.replace(" ", ""))
+            ).collect(Collectors.toList());
+        }
+
+        // 4. Sort
+        Comparator<Notification> comparator = (a, b) -> {
+            LocalDate dateA = TnpscScraperService.parseDate(a.getPublishedDate());
+            LocalDate dateB = TnpscScraperService.parseDate(b.getPublishedDate());
+
+            if (dateA != null && dateB != null) {
+                return dateB.compareTo(dateA); // Newest first
+            }
+            if (dateA != null) return -1;
+            if (dateB != null) return 1;
+
+            LocalDateTime timeA = a.getCreatedAt() != null ? a.getCreatedAt() : LocalDateTime.MIN;
+            LocalDateTime timeB = b.getCreatedAt() != null ? b.getCreatedAt() : LocalDateTime.MIN;
+            return timeB.compareTo(timeA);
+        };
+
+        if ("oldest".equalsIgnoreCase(sort)) {
+            comparator = comparator.reversed();
+        } else if ("closing_soon".equalsIgnoreCase(sort)) {
+            comparator = (a, b) -> {
+                LocalDate dateA = TnpscScraperService.parseDate(a.getApplicationEndDate());
+                LocalDate dateB = TnpscScraperService.parseDate(b.getApplicationEndDate());
+                if (dateA != null && dateB != null) {
+                    return dateA.compareTo(dateB);
+                }
+                if (dateA != null) return -1;
+                if (dateB != null) return 1;
+                return 0;
+            };
+        }
+
+        list.sort(comparator);
+        return list;
+    }
+
+    public List<Notification> getLatestOfficialNotifications(int limit) {
+        List<Notification> all = getOfficialNotifications(null, null, null, "newest");
+        return all.stream().limit(Math.max(limit, 1)).collect(Collectors.toList());
+    }
+
+    public Notification markAsReviewed(String id) {
+        Optional<Notification> opt = notificationRepository.findById(id);
+        if (opt.isPresent()) {
+            Notification n = opt.get();
+            n.setReviewed(true);
+            n.setUpdatedAt(LocalDateTime.now());
+            return notificationRepository.save(n);
+        }
+        return null;
+    }
+
     // Helper method to create notification for quiz completion
     public void createQuizCompletionNotification(String userId, String quizTitle, int score, int totalMarks) {
         double percentage = (score * 100.0) / totalMarks;
@@ -97,30 +182,14 @@ public class NotificationService {
     // Helper method to create welcome notification
     public void createWelcomeNotification(String userId, String userName) {
         Notification notification = new Notification(userId, "WELCOME", "Welcome to TN Exam Prep! 👋", 
-            String.format("Hello %s! Start your learning journey by taking your first quiz.", userName));
+            String.format("Hello %s! Official TNPSC notifications are synced live in the Notifications section.", userName));
         notification.setIcon("👋");
         createNotification(notification);
     }
 
     // Helper method to create default exam announcement notifications
     public void createDefaultExamNotifications(String userId) {
-        // TNPSC Group 4 Exam Notification
-        Notification tnpscGroup4 = new Notification(userId, "EXAM_ANNOUNCEMENT", "TNPSC Group 4 Exam 2025 📢", 
-            "TNPSC Group 4 examination scheduled for March 15-20, 2025. Application deadline: January 31, 2025.");
-        tnpscGroup4.setIcon("📅");
-        createNotification(tnpscGroup4);
-
-        // TNPSC Group 2 Exam Notification
-        Notification tnpscGroup2 = new Notification(userId, "EXAM_ANNOUNCEMENT", "TNPSC Group 2 Exam 2025 📢", 
-            "TNPSC Group 2 examination scheduled for April 10-15, 2025. Application deadline: February 15, 2025.");
-        tnpscGroup2.setIcon("📅");
-        createNotification(tnpscGroup2);
-
-        // TET Exam Notification
-        Notification tet = new Notification(userId, "EXAM_ANNOUNCEMENT", "TN TET Exam 2025 📢", 
-            "Tamil Nadu Teacher Eligibility Test (TET) scheduled for May 5-10, 2025. Application deadline: March 20, 2025.");
-        tet.setIcon("📅");
-        createNotification(tet);
+        // Now obsolete: Official notifications are fetched dynamically from official TNPSC portals
     }
 
     // Helper method to create exam date notification

@@ -24,6 +24,7 @@ public class User {
     private int studyHoursPerDay;
     private boolean emailNotifications;
     private boolean pushNotifications;
+    private String role = "USER"; // "USER" or "ADMIN"
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -89,6 +90,9 @@ public class User {
 
     public boolean isPushNotifications() { return pushNotifications; }
     public void setPushNotifications(boolean pushNotifications) { this.pushNotifications = pushNotifications; }
+
+    public String getRole() { return role != null ? role : "USER"; }
+    public void setRole(String role) { this.role = role; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

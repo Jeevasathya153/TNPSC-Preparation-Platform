@@ -1,7 +1,9 @@
 package com.tnexam.controller;
 
 import com.tnexam.entity.Notification;
+import com.tnexam.entity.SyncLog;
 import com.tnexam.service.NotificationService;
+import com.tnexam.service.TnpscSyncScheduler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +17,91 @@ import java.util.Optional;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final TnpscSyncScheduler syncScheduler;
 
-    public NotificationController(NotificationService notificationService) {
+    public NotificationController(NotificationService notificationService, TnpscSyncScheduler syncScheduler) {
         this.notificationService = notificationService;
+        this.syncScheduler = syncScheduler;
     }
+
+    // ==========================================
+    // Official TNPSC Notification Endpoints
+    // ==========================================
+
+    @GetMapping("/official")
+    public ResponseEntity<List<Notification>> getOfficialNotifications(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "newest") String sort) {
+        return ResponseEntity.ok(notificationService.getOfficialNotifications(category, status, search, sort));
+    }
+
+    @GetMapping("/official/latest")
+    public ResponseEntity<List<Notification>> getLatestOfficialNotifications(
+            @RequestParam(required = false, defaultValue = "5") int limit) {
+        return ResponseEntity.ok(notificationService.getLatestOfficialNotifications(limit));
+    }
+
+    @GetMapping("/official/{id}")
+    public ResponseEntity<?> getOfficialNotificationById(@PathVariable String id) {
+        Optional<Notification> notification = notificationService.getNotificationById(id);
+        if (notification.isPresent() && notification.get().isOfficial()) {
+            return ResponseEntity.ok(notification.get());
+        }
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Official notification not found");
+        return ResponseEntity.status(404).body(error);
+    }
+
+    // ==========================================
+    // Synchronization & Admin Endpoints
+    // ==========================================
+
+    @PostMapping("/sync")
+    public ResponseEntity<?> triggerManualSync() {
+        try {
+            SyncLog result = syncScheduler.triggerManualSync();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Sync failed: " + e.getMessage());
+            return ResponseEntity.status(500).body(error);
+        }
+    }
+
+    @GetMapping("/sync-status")
+    public ResponseEntity<?> getSyncStatus() {
+        Optional<SyncLog> lastLog = syncScheduler.getLastSyncLog();
+        if (lastLog.isPresent()) {
+            return ResponseEntity.ok(lastLog.get());
+        }
+        Map<String, Object> empty = new HashMap<>();
+        empty.put("status", "NO_SYNC_YET");
+        empty.put("message", "No synchronization has occurred yet.");
+        return ResponseEntity.ok(empty);
+    }
+
+    @GetMapping("/sync-history")
+    public ResponseEntity<List<SyncLog>> getSyncHistory() {
+        return ResponseEntity.ok(syncScheduler.getRecentSyncLogs());
+    }
+
+    @PutMapping("/{id}/review")
+    public ResponseEntity<?> markAsReviewed(@PathVariable String id) {
+        Notification updated = notificationService.markAsReviewed(id);
+        if (updated != null) {
+            return ResponseEntity.ok(updated);
+        }
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Notification not found");
+        return ResponseEntity.status(404).body(error);
+    }
+
+    // ==========================================
+    // Existing Notification Endpoints (Backward Compatible)
+    // ==========================================
 
     @GetMapping
     public ResponseEntity<List<Notification>> getAllNotifications() {
@@ -81,6 +164,15 @@ public class NotificationController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNotification(@PathVariable String id) {
+        Optional<Notification> opt = notificationService.getNotificationById(id);
+        if (opt.isPresent()) {
+            Notification n = opt.get();
+            if (n.isOfficial()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("message", "Official TNPSC notifications cannot be removed by normal users.");
+                return ResponseEntity.status(403).body(error);
+            }
+        }
         notificationService.deleteNotification(id);
         Map<String, String> response = new HashMap<>();
         response.put("message", "Notification deleted successfully");
@@ -95,37 +187,12 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
-    // Create default exam notifications for a user
+    // Default exam notifications for user (kept for backward compatibility)
     @PostMapping("/user/{userId}/default-notifications")
     public ResponseEntity<?> createDefaultNotifications(@PathVariable String userId) {
         notificationService.createDefaultExamNotifications(userId);
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Default exam notifications created successfully");
-        return ResponseEntity.ok(response);
-    }
-
-    // Create custom exam date notification (admin use)
-    @PostMapping("/exam-announcement")
-    public ResponseEntity<?> createExamAnnouncement(
-            @RequestParam String userId,
-            @RequestParam String examName,
-            @RequestParam String examDate,
-            @RequestParam String applicationDeadline) {
-        notificationService.createExamDateNotification(userId, examName, examDate, applicationDeadline);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Exam announcement notification created");
-        return ResponseEntity.ok(response);
-    }
-
-    // Create deadline reminder notification (admin use)
-    @PostMapping("/deadline-reminder")
-    public ResponseEntity<?> createDeadlineReminder(
-            @RequestParam String userId,
-            @RequestParam String examName,
-            @RequestParam String deadline) {
-        notificationService.createDeadlineReminder(userId, examName, deadline);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Deadline reminder notification created");
+        response.put("message", "Default notifications handled");
         return ResponseEntity.ok(response);
     }
 

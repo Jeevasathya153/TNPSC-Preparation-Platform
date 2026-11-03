@@ -53,6 +53,12 @@ export const API_ENDPOINTS = {
     list: '/notifications',
     markRead: (id) => `/notifications/${id}/read`,
     delete: (id) => `/notifications/${id}`,
+    official: '/notifications/official',
+    latestOfficial: '/notifications/official/latest',
+    sync: '/notifications/sync',
+    syncStatus: '/notifications/sync-status',
+    syncHistory: '/notifications/sync-history',
+    review: (id) => `/notifications/${id}/review`,
   },
 };
 
